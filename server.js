@@ -2,6 +2,7 @@ require('dotenv').config();
 const express = require('express');
 const bodyParser = require('body-parser');
 const expect = require('chai');
+const helmet = require('helmet');
 const socket = require('socket.io');
 const cors = require('cors');
 
@@ -9,6 +10,19 @@ const fccTestingRoutes = require('./routes/fcctesting.js');
 const runner = require('./test-runner.js');
 
 const app = express();
+
+// 16. Mencegah MIME type sniffing
+app.use(helmet.noSniff());
+
+// 17. Mencegah XSS attacks (mengatur header X-XSS-Protection)
+app.use(helmet.xssFilter());
+
+// 18. Mencegah caching di client
+app.use(helmet.noCache());
+
+// 19. Mengatur header 'X-Powered-By' palsu
+app.use(helmet.hidePoweredBy({ setTo: 'PHP 7.4.3' }));
+
 
 app.use('/public', express.static(process.cwd() + '/public'));
 app.use('/assets', express.static(process.cwd() + '/assets'));
